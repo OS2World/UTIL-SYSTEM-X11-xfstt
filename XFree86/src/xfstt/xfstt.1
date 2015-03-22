@@ -1,0 +1,132 @@
+
+
+
+XFSTT(1)                                                 XFSTT(1)
+
+
+NAME
+       xfstt - X11 font server for *ttf fonts (OS/2 port)
+
+SYNOPSIS
+       xfstt [ [--gslist] --sync] [--port n] [--dir dirname]
+             [--unstrap] [--multi] [--once] [--help]
+             [--res resolution] [--encoding list] [--mondo]
+
+DESCRIPTION
+       Xfstt serves *ttf fonts to one X11 server.  Start xfstt
+       then tell X11 about the font server with:
+
+       xset fp+ inet/127.0.0.1:7100
+
+       Set your FONTSERVER environment variable to:
+
+       SET FONTSERVER=127.0.0.1:7100
+
+       You should preferrably embed the above line in CONFIG.SYS.
+
+OPTIONS
+
+       --sync  Synchronize the font database with installed fonts
+               and exit when done. Don't do this while xfstt is
+               running.
+
+       --gslist
+               Print font list in a format usable for ghostscript
+               during --sync. Currently the --gslist option has
+               to be before the --sync option:
+
+               xfstt --gslist --sync
+
+       --encoding
+               Remap to different encodings. Default is
+               iso8859-1. Usage example:
+
+               xfstt --encoding iso8859-2,koi8-r,windows-1251
+
+               !!!NOTE: one comma but no blanks between the
+               encodings!!!
+
+       --port number
+               Change the port number for xfstt's font services.
+               The default for X11 font servers is --port 7100.
+
+       --dir name
+
+               Change xfstt's font directory.
+               The default is:
+
+               --dir /XFree86/lib/X11/fonts/TrueType
+
+               (/XFree86 is in your X11ROOT directory.)
+
+
+
+XFSTT 0.9.10               1998 Dec 22                          1
+
+
+
+
+
+XFSTT(1)                                                 XFSTT(1)
+
+       --res value
+               Force the resolution for underspecified fonts to
+               value (typically 96 or 120). Default is the value
+               the X11 server suggests which can be adjusted by
+               the -dpi option of the X11 server. Standard X11
+               servers have defaults of 72 dpi.
+
+       --unstrap
+               Allow some more unicode characters. This is
+               dangerous for many X11 servers. Start the X server
+               with the "-deferglyphs 16" option to give the X
+               server a better chance of surviving. For very
+               carefully implemented X servers you may recompile
+               with UNSTRAPLIMIT set to 65535 in order to get the
+               complete unicode range.
+
+       --once  Exit after the font client disconnects.
+
+       --multi Opposite of --once option. This has become the
+               default behaviour, so it is obsolete now and is
+               ignored for backwards compatibility. It will be
+               removed in a future release.
+
+       --inetd Tell xfstt to be used as inetd service.
+
+       --daemon
+               Behave like a daemon. Avoid this option under
+               OS/2.
+
+       --help  Print brief usage information on standard output
+               and exit.
+
+       --mondo Only service one client at a time. Use this option
+               if you have problems under OS/2.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+XFSTT 0.9.10               1998 Dec 22                          2
+
+

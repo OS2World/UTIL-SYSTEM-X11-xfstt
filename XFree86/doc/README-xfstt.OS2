@@ -1,0 +1,77 @@
+xfsttos2 0.9.10 - TrueType X fontserver for OS/2 (1998 Dec 22)
+http://iiinet.ml.org/xfsttos2
+
+This was a quick port of xfstt, an X fontserver for TrueType fonts
+written by Herbet Duerr, to OS/2. This package is intended for
+XFree86 for OS/2. TrueType fonts in general look nicer than Adobe
+Type 1 fonts, especially at low resolutions.
+
+Simply unzip this package as usual to the root where \XFree86 is.
+Then, copy some TrueType fonts to \XFree86\lib\X11\fonts\TrueType.
+You can use fonts from Windows 3.1, Win-OS/2, Windows 95, Windows 98,
+or Windows NT.
+
+If you want to use your fonts with your X server, you will need to
+edit your FontPath lines in \XFree86\lib\X11\XF86Config to something
+like this:
+
+FontPath   "/XFree86/lib/X11/fonts/misc/:unscaled"
+FontPath   "/XFree86/lib/X11/fonts/100dpi/:unscaled"
+FontPath   "/XFree86/lib/X11/fonts/75dpi/:unscaled"
+FontPath   "inet/127.0.0.1:7103"
+FontPath   "/XFree86/lib/X11/fonts/Type1/"
+FontPath   "/XFree86/lib/X11/fonts/Speedo/"
+FontPath   "/XFree86/lib/X11/fonts/misc/"
+FontPath   "/XFree86/lib/X11/fonts/100dpi/"
+FontPath   "/XFree86/lib/X11/fonts/75dpi/"
+
+Make sure the `inet' line is after the `:unscaled' lines, but before
+anything else.
+
+Now, you need to configure INETD (the TCP/IP superserver) to use
+xfstt. Run this command exactly as shown:
+
+echo ffst 7103/tcp>>%etc%\services
+
+and run this command exactly as shown:
+
+echo ffst xfstt --once --inetd>>%etc%\services
+
+Finally, you need to `autostart' the INETD process. You can either do
+this with the TCP/IP configuration notebook on the "Autostart" page,
+or by placing an entry like this in \STARTUP.CMD:
+
+start "Superserver" /min inetd
+
+Running xfstt outside of INETD results in very poor operation; you
+can use it with fslsfonts, fstobdf, or showfont, but the X server
+will be unable to use it at all.
+
+This package only provides TrueType fonts to X windows applications.
+If you would like to use TrueType fonts with OS/2 PM applications, I
+recommend to you the FreeType/2 package. You can find details at
+FreeType's website in ``http://www.freetype.org/ft_os2/index.html''.
+
+You can build xfsttos2 from the included sources provided you have
+emx+gcc and g++ installed. Note that the makefile used is in NMAKE
+syntax, not make (or gmake) syntax. NMAKE is available from Hobbes or
+from IBM's website in the DDK tools download section. You can also
+compile this for IBM's PMX product with the IBM's C/C++ Tools or
+IBM's Visual Age C++ (since xfstt is fully X11R5 compatible). You
+will have to modify references to XFree86 and EMX if you really want
+to do this. This is redundant since PMX can use OS/2 PM fonts. I
+insist on using PMX because it runs on 20 megahertz 386DX machines
+with eight megabytes of memory and an obscure Microchannel display
+adapter -- I'm working on XF86_PM...
+
+This port hasn't been well tested and some major changes were made,
+due to xfstt's use of fork(1). If you find bugs, please let me know.
+I will fix them on a best-effort basis. You can try using the
+--once option when you start xfstt which may cure some problems. I am
+aware that xfstt under OS/2 is a memory hog. It doesn't have any
+memory leaks, however, so it should be stable.
+
+                                                  Merry Christmas,
+                                                  Joshua Rodd
+                                                  <jerodd@usa.net>
+                                                  1998 Dec 22

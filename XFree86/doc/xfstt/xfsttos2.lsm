@@ -1,0 +1,18 @@
+Begin3
+Title:          xfsttos2
+Version:        0.9.10
+Entered-date:   0.9.10 1998/22/12
+Description:    X Font Server for TrueType fonts (OS/2 port)
+Keywords:       OS/2 XFree86 EMX truetype font server ttf X11 PMX
+Author:         duerr@de.ibm.com jerodd@usa.net
+Maintained-by:  duerr@de.ibm.com jerodd@usa.net
+Primary-site:   http://iiinet.ml.org/xfsttos2
+                80 kb Xfsttos2-0.9.10.zip
+                1 kb  Xfsttos2-0.9.10.lsm
+Original-site:
+Platforms:      i386 under
+                os2
+                (other platforms should use xfstt proper)
+Copying-policy: LGPL
+End
+

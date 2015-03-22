@@ -1,0 +1,436 @@
+0.9  What is xfsttos2?
+
+1.0  What is xfstt?
+1.1  How do I test it?
+1.2  How do I use it?
+
+2.0  It doesn't work! I get something like "fontpath not found"!
+2.1  The X11 server doesn't start when xfstt isn't running!
+2.2  Xfstt locks up my machine! It makes some applications unstable!
+2.3  Why are no fonts included? Where do I get some?
+2.4  How does one add fonts?
+2.5  What are these weird fontnames displayed by xlsfonts when using xfstt?
+2.6  Why shouldn't I serve fonts via tcpip to my friends overseas?
+2.7  Why does program xxx look awful with most *.ttf fonts?
+2.8  Big font sizes don't work, some glyphs look like garbage!
+2.9  I cannot see all of my gazillion installed fonts!
+2.10 Why can't I use all 16bit characters?
+2.11 Rotated glyphs have wrong spacing!
+2.12 The glyphs are too small!
+2.13 How does one request an encoding different from iso8859-1?
+2.14 Why are multiple instances of xfstt running?
+
+3.0  How do I put fonts in categories?
+3.1  use with java (tm)
+3.2  use with netscape/communicator (tm)
+3.3  use with staroffice (tm)
+3.4  How do I print documents which use *.ttf fonts?
+3.5  Does xfstt have anti-aliasing/grayscaling technology?
+
+4.0  I have problems to compile xfstt!
+4.1  Will it be merged with the X server?
+4.2  Why another free ttf font server?
+4.3  How are embedded *ttf fonts used?
+4.4  How can I help?
+4.5  Why the LGPL licence though xfstt is not a library?
+
+-----------------------------------------------------------------------------
+
+0.9 What is xfsttos2?
+
+        This section by [jer] (Joshua Rodd).
+
+        xfstt is a port of the "X fontserver for TrueType" to OS/2. It runs
+        as a regular fontserver under the XFree86 for OS/2 X window system.
+
+        See README.OS2 for more OS/2-specific information. The rest of this
+        FAQ assumes you are using Unix. Mentally make these substitutions:
+
+        OS/2 equivilent                           Unix equivilent
+        ---------------                           ---------------
+        \XFree86\lib\X11\fonts\Truetype           /usr/ttfonts
+        inet/127.0.0.1:7100                       unix/:7100
+        start /min xfstt                          xfstt &
+        \OS2\MDOS\WINOS2\SYSTEM (note 1)          /DOS/windows/fonts
+        \WINDOWS\SYSTEM (note 2)                  /DOS/windows/fonts
+
+        Note 1: Use this if you are using OS/2 2.0, OS/2 2.1 with Win-OS/2,
+        OS/2 3 with Win-OS/2, OS/2 4 (except DevCon release), or OS/2 4.5
+
+        Note 2: Use this if you are using OS/2 2.1 for WIndows, OS/2 3, or
+        OS/2 4 DevCon release.
+
+        (You can use TrueType fonts from a regular Windows installation as
+        well. Apple TrueType fonts are reported to also work.)
+
+-----------------------------------------------------------------------------
+
+1.0 What is xfstt?
+
+        Xfstt means "X11 Font Server for TT fonts".
+        TT fonts are generally regarded to be the best scalable
+        fonts for low resolution devices like displays.
+
+        Examples where good scalable fonts improve the visual quality
+        considerably are netscape(tm), gimp and java(tm).
+        A fonts.properties file for use with java is provided.
+
+        Xfstt is freely available under the LGPL. This basically means:
+        Use it for free; if you fix bugs you have to contribute the
+        fixes to the public.
+
+1.1 How do I test it?
+
+        mkdir /usr/ttfonts and put some *ttf fonts there, now run
+
+        make xfstt && make install
+        xfstt --sync
+        xfstt &
+        xset fp+ unix/:7100
+        xlsfonts
+        xcoral -fn "TTM20_Times New Roman"
+        xfontsel -pattern "-*-*-*-*-*-tt-*-*-*-*-*-*-*-*"
+        xset -fp unix/:7100
+
+        If your X server cannot handle the unix protocol replace the
+        unix/:7100 part by inet/127.0.0.1:7100 (assuming the machine
+        running xfstt has 127.0.0.1 as internet address).
+
+        xfontsel is part of the xcontrib package. There is a port of it
+        to OS/2; see Holger Veit's page (http://set.gmd.de/~viet/os2).
+        I don't know what xcoral is. [jer]
+
+1.2 How do I use it?
+
+        Add unix/:7100 to the fontpath in your X11 configuration file.
+        Start xfstt a few seconds before starting X11.
+
+        The font name for a 24 point Arial would be "TTM24_Arial" or
+        "-ttf-arial-medium-r-normal-tt-18-240-75-75-p-123-iso8859-1",
+        whichever of both naming conventions you find more convenient.
+
+        Using xfstt's fontpath as the first fontpath is not a good idea:
+        If the first truetype font would be a symbol/dingbat/wingdings
+        font, the default font would be very hard to read (it sure looks
+        interesting though :-)
+
+-----------------------------------------------------------------------------
+
+2.0  It doesn't work! I get something like "bad font path"!
+
+        A font server needs a fair chance to offer font services to
+        clients. If you start the font server and the X server at
+        the same time there are chances the background app fs doesn't
+        get a time slice before the X server looks at it's font paths.
+        In some situations xfstt needs to rebuild it's font database
+        which may take some extra seconds.
+
+        If "xset fp+ unix/:7100" fails while running X it very often
+        turned out xfstt wasn't started! Please check this with the
+        "ps" command. If it hasn't started, start it now.
+
+        If you are running the font server on a machine that has a
+        different byte order than the client machine then it works as
+        designed. Move the font server to a machine with the correct
+        byte order.
+
+2.1 The X11 server doesn't start when xfstt isn't running!
+
+        This usually happens after you added "unix/:7100" to the X11
+        server default fontpath. Most X11 servers are not prepared
+        to handle the situation that a resource they are told to use
+        isn't there. Either remove the default fontpath or make sure
+        xfstt is started before the X11 server.
+
+        Despite xfstt's marvellous capabilities it cannot do anything
+        when it isn't running.
+
+2.2 Xfstt locks up my machine! It makes some applications unstable!
+
+        Sorry about that. Xfstt itself cannot lock up the machine.
+        The X server that stops handling user requests is to blame.
+        It is xfstt fault when a bad font crashes it and it is the
+        the X servers fault when it stops handling user requests after
+        a font server has died.
+        If you are a developer please add this your TODO list...
+
+        Due to the sad history of X11 fonts many X11 applications are
+        not properly tested for the huge number of fonts, proportional
+        and scalable fonts and the big glyph sizes Xfstt can provide.
+        If you have applications that suffer from buffer overruns please
+        fix the application, reduce the number of installed fonts or use
+        not too big font sizes.
+
+2.3 Why are no fonts included? Where do I get some?
+
+        Free fonts have the wierdest copyrights one can imagine. A typical
+        restriction is "non-commercial use only". Including such fonts in
+        the package would prevent xfstt from being put on CDROMs.
+
+        *.ttf fonts are often included as bonus for printers, word
+        processors, graphics applications, operating systems,...
+
+        There are a lot of cheap CDs with hundreds of *.ttf fonts.
+
+        On the web there are many places where you can download fonts:
+        http://www.winsite.com/win3/fonts/truetype/index.html
+        http://www.microsoft.com/truetype
+        http://www.hooked.net/~flubble/typography.html
+        http://home1.gte.net/tiaralyn/pctt.htm
+        http://www.homunculus.com/access/CustomDirs/Fonts.html
+        http://indigo.simplenet.com/fontz
+        http://www.pagesz.net/~mhare/fonts/index.htm
+        http://klink.net/~rcklueg/font1.html
+        http://www.fonthead.com/main.html
+        http://members.aol.com/ChiChiX/pages/fonts.html
+        http://moon.yerphi.am/~hovik/Archive/Archive-PC/Fonts
+        http://www.geocities.com/SoHo/7554/downloads/fonts
+        and many many other web sites
+
+2.4 How does one add fonts?
+
+        Copy *.ttf fonts into the /usr/ttfonts/ directory or put some
+        softlinks to font directories in there. A typical example is
+        ln -s /DOS/windows/fonts /usr/ttfonts/winfonts
+
+        Now run "xfstt --sync" in order to have the new fonts recognized.
+        Adding fonts while xfstt is running doesn't work yet.
+
+2.5 What are these weird fontnames displayed by xlsfonts when using xfstt?
+
+        xlsfonts results while running xfstt look like:
+        TTUP020206030504050203040Times New Roman
+
+        The reason is that the X11 Font Server protocol does not provide a
+        way to query typographic information about fonts. So the only way
+        to provide this information without changing this protocol is to
+        "sideband" the typographic info into the fontname. The typographic
+        info provided by xfstt is the panose information. For details of the
+        panose specification have a look at
+        http://www.w3.org/pub/WWW/Fonts/Panose/pan2.html
+
+2.6 Why shouldn't I serve fonts to my friends overseas via tcpip?
+
+        Make sure you conform to the font licence when serving to
+        multiple clients. The clients must use the same byte order
+        as the server. Currently the rasterization results are not
+        shared between different xfstt processes, so resources
+        needed are about proportional to the number of clients.
+
+2.7 Why does program xxx look awful with most *.ttf fonts?
+
+        Most *.ttf fonts are proportional (i.e. 'W' is wider than 'i').
+        Due to the sad history of font support in X11 many X programs
+        (e.g. xterm) still don't know how to handle proportional fonts.
+
+        It may be possible to also serve monospaced versions of proportional
+        fonts. This feature is not implemented yet. Since this will probably
+        cause problems with ttf hinting, the monospaced version will most
+        likely not match the quality of the original proportional font. Good
+        ideas how to avoid this effect are welcome.
+
+2.8 Big font sizes don't work, some glyphs look like garbage!
+
+        Most X11 font server protocol prefer replies limited to 256kB.
+        If a font is scaled with a big size the glyph bitmaps may not
+        fit into 256kB. Bigger replies tend to cause the X11 server to
+        return "BadAlloc Failures" for XOpenFont requests which confuses
+        and kills many applications. One would have to split up the reply.
+        Many popular X11 servers do not handle split up replies yet.
+
+        Xfstt tries to serve as many glyphs as possible. If there is no
+        room left in a limited reply it skips the remaining characters.
+        Since the X server already made up his opinion how big these
+        "phantom glyphs" are, it tries to display something: garbage
+
+        It is a good idea to have the X server be started with the options
+        -deferglyphs 8 -deferglyphs 16
+        Then the X server will load characters only in small groups, not
+        all at once. The maximum size of the glyphs is still finite, but
+        they will have some more room.
+
+2.9 I cannot see all of the gazillion fonts I installed!
+
+        The X11 font server protocol limits many replies to 256kB. If a
+        font name list would exceed this limit one would have to split
+        up the reply.  Many popular X11 servers cannot handle split up
+        replies yet.
+
+2.10 Why can't I use all 16bit characters?
+
+        Some popular X11 servers cannot handle split up replies yet,
+        but they request data for all characters they are told about.
+        A reply of 24bytes * 64k chars exceeds their reply size limit
+        by far and this causes trouble.
+
+        Serving unicodes < 256 is default; if you are ready to take
+        the risk of 16bit chars use the --unstrap option for xfstt
+        and the "-deferglyphs 16" option for the X11 server.
+
+2.11 Rotated glyphs have wrong spacing!
+
+        The X11 font server protocol only supports x advance widths,
+        not y advance widths. Xfstt takes the XCharStruct.attributes
+        field to pass y advance widths. No current X server uses
+        this information to display rotated strings.
+
+2.12 The glyphs are too small!
+
+        Most operating systems handling ttf fonts assume default
+        resolutions of 96dpi, 120dpi or higher. Most X servers
+        tell Xfstt to assume a default resolution of 72 dpi.
+        A 12pt font at 96dpi is the same as a 16pt font at 72dpi.
+
+        The solution is to tell the X server that the default
+        resolution is different from the default 72 dpi. To
+        do this start the X server with the -dpi option.
+        Alternatively xfstt provides the --res option. Example:
+        xfstt --res 96
+
+2.13 How does one request an encoding different from iso8859-1?
+
+        By default xfstt uses the unicode encoding which accidentially
+        matches the iso8859-1 encoding for the first 256 characters.
+        Starting in version 0.9.8 the unicode can be remapped to other
+        encodings with the --encoding option. Example:
+        xfstt --encoding iso8859-2,koi8-r,windows-1251
+
+2.14 Why are multiple instances of xfstt running?
+
+        Currently xfstt implements multiple connections by cloning itself
+        for every new connection. The number of xfstt instances equals
+        the number of connections plus one. The last instance waits for
+        new font clients. It is planned to change this behaviour by using
+        a more efficient shared memory method.
+
+-----------------------------------------------------------------------------
+
+3.0  How do I put fonts in categories?
+
+        Create some subdirectories in /usr/ttfonts, e.g.
+        modern, script, brush, old, symbol, ...
+        and put the appropiate fonts in there. The corresponding font
+        names will be -modern-*, -script-*, -brush-* and so on
+
+3.1 use with java (tm) 1.1 and up
+
+        Overwrite the fonts.properties file in $(JAVA_HOME)/lib/ with
+        the one you find here. Note that IBM's Java for OS/2 won't
+        use that; you'll need the FreeType/2 package if you want to
+        use TrueType fonts with Java. Of course, if you are using
+        Java as an X client on another machine and are using OS/2 as
+        your X server or X fontserver, then use java.properties on
+        the machine which actually run the Java executables. (The
+        same comments are true for Netscape for OS/2 as well.
+        StarOffice uses X, so these comments aren't true for it.)
+
+3.2 use with netscape (tm)
+
+        Since X11 netscape 3 doesn't use scrollable listboxes for font
+        selection having more than a dozen *ttf fonts makes selecting
+        fonts difficult. Netscape 4 needs a while to sort the fonts if
+        several hundreds are installed. Netscape has the bad habit of
+        not closing fonts when they are no longer used. As the number
+        of open fonts is finite after some font changes requests for
+        opening more fonts are rejected.
+
+        Also the listbox for fontsizes only shows the size 0; enable
+        scaling and type in the requested size in the box next to it.
+
+3.3  use with staroffice (tm)
+
+        Starting in version 0.9.8 xfstt recognizes the not well formed
+        staroffice request for fonts with "-*" names. When using an older
+        xfstt version you can't access its fonts in staroffice.
+
+        Starwrite will only display fonts it can also print. Tell StarOffice
+        about the printable fonts in xp3/fontmetrics/afm/, xp3/psstd.fonts,
+        and the appropriate printer capability file in xp3/ppds/, also tell
+        ghostscript about the fonts in the fontmap file.
+        (Many more details of these problems are in the IX 1998/05 magazine
+        or in Brion Vibber's Truetype HOWTO).
+
+3.4 How to use with solaris?
+
+        There is a report that port 7100 on solaris is already
+        occupied. Use another port, e.g. "xfstt --port 6666".
+
+3.5 How do I print documents which use *.ttf fonts?
+
+        Unfortunately the X Consortium decided in its early days that the
+        display and printer are completely unrelated devices. There was no
+        common architecture for graphics devices. The recent approach to
+        close this gaping architectual hole is to use a X Print Server.
+
+        A solution is to use ghostscript's ability to render ttf fonts.
+        In order to help ghostscript figure out which fonts are available
+        the --gslist option was added to xfstt. Usage example
+        xfstt --gslist --sync > fontmap
+
+3.6 Does xfstt have anti-aliasing/grayscaling technology?
+
+        The font engine in xfstt does grayscaling. Unfortunately neither
+        the X11 font server protocol nor most X11 servers know how to handle
+        grayscaled fonts.
+
+-----------------------------------------------------------------------------
+
+4.0 I have problems to compile xfstt!
+
+        Xfstt is supposed to compile right out of the box. If the
+        error message says something about missing include files
+        make sure that you have a package xdevel or similar installed.
+        Also for some not understood reasons on FreeBSD you have to use
+        gmake instead of standard make.
+
+        If this doesn't help get a binary release (e.g. from the great
+        debian distribution http://www.debian.org).
+
+4.1 Will it be merged with the X server?
+
+        Merging it with the X server creates some opportunities. It makes
+        advanced features like grayscaling, kerning, glyph substitution,
+        ligatures, unlimited glyph sizes and vertical advance widths for
+        rotated text possible.
+
+        It would also allow that only those glyphs that are actually
+        needed have to be rendered. Currently all glyphs in a font
+        have to be hinted in order to get almost useless font summary
+        properties. Fonts with lots of glyphs take considerably longer
+        than they should take because of this.
+
+        Unfortunately this requires a major rewrite of the X11 font
+        subsystem.
+
+4.2  Why another free ttf font server?
+
+        Xfstt was actually the first free truetype font server.
+        It was written from scratch, the useful freetype library
+        not being ready in early 1997.
+
+4.3 How are embedded *ttf fonts used?
+
+        Xfstt doesn't fully support dynamic adding/removing fonts yet.
+        This is a prerequisite for handling embedded fonts.
+
+        The intermediate solution is to send a FS_SetCatalogues request
+        to xfstt which makes it rebuild its font database.
+
+4.4 How can I help?
+
+        Xfstt is reported to work on i386/m68k/sparc/alpha/mips/ppc on
+        linux/freebsd/aix/irix/sco/osf/solaris platforms.
+        Porting it to a different platform may require small modifications
+        in the architecture dependent header file "arch.h".
+
+        Item 4.1 of this FAQ dreams up the great benefits that could be
+        achieved by deeply embedding scalable font technology into a carefully
+        revised X11 font subsystem. Read and understand the limitations of the
+        current X11 font subsystem and try to do something about it.
+
+4.5 Why the LGPL licence though xfstt is not a library?
+
+        It is an (almost) trivial exercise to combine parts of the
+        package into a library. The LGPL licence has considerable
+        benefits for developers using libraries.
+

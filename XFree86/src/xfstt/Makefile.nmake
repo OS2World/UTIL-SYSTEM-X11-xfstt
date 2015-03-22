@@ -1,0 +1,88 @@
+# @(#)Makefile.xfsttos2.NMAKE 0.9.10 Jan 28 1998
+
+# You should use the other Makefile instead of this one. This is for using
+# NMAKE because I (Joshua Rodd) was too lazy (and ignorant) of how to use
+# gmake. This one has been left in here for completeness, and also to provide
+# a skeleton for using it with icc and PMX (it does work with PMX).
+
+# This is an NMAKE-compatible makefile. It won't work with make
+# (or gmake). NMAKE is available in an OS/2 port from IBM for
+# free on Hobbes (or on their website in the DDK tools).
+
+# This is geared for emx+gcc and g++ with XFree86 for OS/2. Some
+# minor tweaks are neccessary for using icc with PMX.
+
+#MAXOPT = -O6 -fomit-frame-pointer -ffast-math
+MISCOPT =
+OPT = $(MISCOPT) $(MAXOPT)
+
+CFLAGS = -g -Wall -pedantic $(MISCOPT) -DMAGNIFY=0
+
+LFLAGS = -g -L$(X11ROOT)/XFree86/lib
+
+CC = gcc
+LD = gcc
+
+OBJS = RAFile.o TTFont.o NameTable.o HeadTable.o MaxpTable.o CmapTable.o\
+ LocaTable.o GlyfTable.o LtshTable.o HdmxTable.o VdmxTable.o FpgmTable.o\
+ PrepTable.o GaspTable.o HheaTable.o HmtxTable.o CvtTable.o Os2Table.o\
+ KernTable.o EbdtTable.o EblcTable.o RasterHints.o RasterScale.o RasterDraw.o
+
+#DEPHACK = ttf.h arch.h Makefile
+DEPHACK =
+
+.SUFFIXES: .cpp .o .s
+
+.cpp.o:
+ $(CC) $(CFLAGS) -c $<
+
+.cpp.s:
+ $(CC) -S $(CFLAGS) -c $<
+
+.cpp.o:
+ $(CC) $(CFLAGS) -c $<
+
+all: xfstt.exe xfstt.gz
+
+install: xfstt.exe xfstt.gz
+ copy xfstt.exe $(X11ROOT)\XFree86\bin>nul
+ copy xfstt.gz $(X11ROOT)\XFree86\man\man1\xfstt.gz>nul
+ -@mkdir $(X11ROOT)\XFree86\man 2>nul
+ -@mkdir $(X11ROOT)\XFree86\man1 2>nul
+ -@mkdir $(X11ROOT)\XFree86\lib\X11\fonts\TrueType 2>nul
+ @echo.
+ @echo Remember to copy fonts from \WINDOWS\SYSTEM or \OS2\MDOS\WINOS2\SYSTEM
+ @echo to $(X11ROOT)\XFree86\lib\fonts\TrueType. You should copy all TTF files; i.e.:
+ @echo     copy \WINDOWS\SYSTEM\*.TTF $(X11ROOT)\XFree86\lib\X11\fonts\TrueType
+ @echo     copy \OS2\MDOS\WINOS2\SYSTEM\*.TTF $(X11ROOT)\XFree86\X11\lib\fonts\TrueType
+ @echo (This requires that Windows or Win-OS/2 be installed.)
+ @echo Of course, you can use fonts from other sources than Windows or Win-OS/2.
+ @echo After you populate $(X11ROOT)\XFree86\lib\X11\fonts\TrueType with fonts,
+ @echo run this command:
+ @echo     xfstt --sync
+ @echo This will prepare the fonts for use. See README.OS2 for more information.
+
+clean:
+ erase *.o xfstt.exe showttf.exe perftest.exe patchttf.exe 2>nul
+
+xfstt.exe: $(OBJS) xfstt.o encoding.o $(DEPHACK)
+ $(LD) -o $@ $(OBJS) xfstt.o encoding.o binmode.o $(LFLAGS) -lm -lsocket
+
+xfstt.o: xfstt.cpp xfstt.h $(DEPHACK)
+ $(CC) $(CFLAGS) -c $*.cpp -I$(X11ROOT)/XFree86/include/X11/fonts\
+ -I$(X11ROOT)/XFree86/include/X11 -I$(X11ROOT)/XFree86/include
+
+encoding.o: encoding.cpp encoding.h $(DEPHACK)
+ $(CC) $(CFLAGS) -c $*.cpp
+
+showttf.exe: $(OBJS) showttf.o $(DEPHACK)
+ $(LD) -o $@ $(OBJS) showttf.o $(LFLAGS) -lX11 -lm
+
+perftest.exe: $(OBJS) perftest.o $(DEPHACK)
+ $(LD) -o $@ $(OBJS) perftest.o $(LFLAGS) -lm
+
+patchttf.exe: patchttf.cpp $(DEPHACK)
+ $(CC) $(CFLAGS) -o $@ $*.cpp
+
+xfstt.gz: xfstt.1
+ gzip <$**>$@

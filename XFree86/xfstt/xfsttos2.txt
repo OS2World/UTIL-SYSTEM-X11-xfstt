@@ -1,0 +1,35 @@
+                         Upload Information Template for Hobbes.nmsu.edu
+                          ===============================================
+
+        Archive Filename: xfsttos2
+       Short Description: xfsttos2 - TrueType X fontserver for OS/2
+        Long Description: xfsttos2 - port of xfstt to OS/2
+                          Allows you to use TrueType fonts with XFree86
+                          for OS/2. It's derived from Herbert Duerr's
+                          excellent xfstt, which was intended for Unix.
+                          It gives good performance and gives excellent
+                          rendering of fonts at low resolutions. You
+                          can use your TrueType fonts from Win-OS/2 or
+                          any other Windows system. Includes documentation
+                          on how to get it to work with IBM's INETD.
+                          Includes updates from a contributor which make
+                          it easier to set up when just using it with a
+                          local X server.
+
+      Proposed directory
+           for placement: /pub/os2/system/x11
+
+               Your name: Joshua E. Rodd
+           Email address: jerodd@usa.net
+    Program contact name: (same)
+   Program contact email: (same)
+             Program URL: http://iiinet.ml.org:8/xfsttos2
+
+      Would you like the
+   contact email address
+    included in listings? yes
+
+Operating System/Version: OS/2 Warp 3 and up
+ Additional requirements: TCP/IP, XFree86+EMX (or PMX)
+
+                Replaces: xfsttos2
